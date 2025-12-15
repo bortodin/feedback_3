@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Історія відгуків працівника</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #cdd6e7 0%, #b7cbef 100%);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            background: #313f56;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.3rem;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: #7a90b8;
+            color: white;
+        }
+
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        tr:hover {
+            background-color: #e0e0e0 !important;
+            transition: 0.2s;
+        }
+
+        .timestamp {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+
+        .vote-like {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .vote-dislike {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .comment-yes {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .comment-no {
+            color: #6c757d;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #161718;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .modal-body {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #333;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .envelope-icon {
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 8px;
+            color: #1e3c72;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .envelope-icon:hover {
+            transform: scale(1.2);
+            color: #7a90b8;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            th,
+            td {
+                padding: 12px 10px;
+                font-size: 0.95rem;
+            }
+
+            .timestamp {
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                margin: 0 10px;
+            }
+
+            .back-btn {
+                position: static;
+                display: block;
+                width: fit-content;
+                margin: 0 auto 10px;
+                transform: none;
+            }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            padding: 20px 30px 0;
+            justify-content: flex-start;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-archive {
+            background-color: #7a90b8;
+            color: white;
+        }
+
+        .btn-archive:hover {
+            background-color: #1e3c72;
+        }
+
+        .btn-ai {
+            background-color: #6c5ce7;
+            color: white;
+        }
+
+        .btn-ai:hover {
+            background-color: #5b4bc4;
+        }
+
+        /* Archive Modal specific */
+        .archive-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .archive-option-btn {
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: white;
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .archive-option-btn:hover {
+            border-color: #7a90b8;
+            background-color: #f8f9ff;
+            color: #7a90b8;
+        }
+
+        .archive-option-btn span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="admin.html" class="back-btn">← Назад</a>
+            <h1 id="pageTitle">Історія відгуків: Завантаження...</h1>
+        </header>
+
+        <div class="action-buttons">
+            <button class="action-btn btn-archive" onclick="openArchiveModal()">
+                📂 Архів коментарів
+            </button>
+            <button class="action-btn btn-ai" onclick="openAiModal()">
+                🤖 ШІ аналіз коментарів
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table id="feedbackTable">
+                <thead>
+                    <tr>
+                        <th>Дата та час</th>
+                        <th>Оцінка</th>
+                        <th>Коментар</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+            <div id="noData" class="no-data" style="display: none;">Немає відгуків для цього працівника</div>
+        </div>
+    </div>
+
+    </div>
+    </div>
+
+    <!-- Archive Modal -->
+    <div id="archiveModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchiveModal()">&times;</span>
+            <div class="modal-header">Архів коментарів</div>
+            <div class="modal-body">
+                <p>Оберіть категорію коментарів для перегляду:</p>
+                <div class="archive-options">
+                    <a href="#" onclick="goToComments('all')" class="archive-option-btn">
+                        Всі коментарі <span>📑</span>
+                    </a>
+                    <a href="#" onclick="goToComments('positive')" class="archive-option-btn">
+                        Позитивні коментарі <span style="color: #28a745;">👍</span>
+                    </a>
+                    <a href="#" onclick="goToComments('negative')" class="archive-option-btn">
+                        Негативні коментарі <span style="color: #dc3545;">👎</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Analysis Selection Modal -->
+    <div id="aiModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAiModal()">&times;</span>
+            <div class="modal-header">ШІ аналіз коментарів</div>
+            <div class="modal-body">
+                <p>Оберіть тип аналізу:</p>
+                <div class="archive-options">
+                    <button onclick="performAiAnalysis('all')" class="archive-option-btn">
+                        Всі коментарі <span>🧠</span>
+                    </button>
+                    <button onclick="performAiAnalysis('positive')" class="archive-option-btn">
+                        Позитивні коментарі <span style="color: #28a745;">😊</span>
+                    </button>
+                    <button onclick="performAiAnalysis('negative')" class="archive-option-btn">
+                        Негативні коментарі <span style="color: #dc3545;">😔</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Result Modal -->
+    <div id="aiResultModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close-btn" onclick="closeAiResultModal()">&times;</span>
+            <div class="modal-header">Результат аналізу</div>
+            <div class="modal-body" id="aiResultText" style="white-space: pre-wrap;"></div>
+        </div>
+    </div>
+
+    <!-- Modal Structure (Existing Comment Modal) -->
+    <div id="commentModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-header">Коментар відвідувача</div>
+            <div class="modal-body" id="modalText"></div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(text) {
+            const modal = document.getElementById('commentModal');
+            const modalText = document.getElementById('modalText');
+            modalText.textContent = text;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('commentModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        window.onclick = function (event) {
+            const commentModal = document.getElementById('commentModal');
+            const archiveModal = document.getElementById('archiveModal');
+            const aiModal = document.getElementById('aiModal');
+            const aiResultModal = document.getElementById('aiResultModal');
+
+            if (event.target === commentModal) closeModal();
+            if (event.target === archiveModal) closeArchiveModal();
+            if (event.target === aiModal) closeAiModal();
+            if (event.target === aiResultModal) closeAiResultModal();
+        }
+
+        // Archive Modal Functions
+        function openArchiveModal() {
+            const modal = document.getElementById('archiveModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeArchiveModal() {
+            const modal = document.getElementById('archiveModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function openAiModal() {
+            const modal = document.getElementById('aiModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAiModal() {
+            const modal = document.getElementById('aiModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function closeAiResultModal() {
+            const modal = document.getElementById('aiResultModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        async function performAiAnalysis(type) {
+            closeAiModal();
+            const employeeId = getEmployeeIdFromUrl();
+            if (!employeeId) return;
+
+            // Show loading state
+            const resultModal = document.getElementById('aiResultModal');
+            const resultText = document.getElementById('aiResultText');
+            resultText.innerHTML = '<div style="text-align:center; padding: 20px;">🤖 Аналізую... Будь ласка, зачекайте.</div>';
+            resultModal.style.display = 'flex';
+
+            try {
+                const response = await fetch('/api/feedback/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ employeeId, type })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Network error');
+                }
+
+                const data = await response.json();
+
+                // Format the text (simple markdown to bold conversion)
+                let formattedText = data.analysis
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\* (.*?)/g, '• $1');
+
+                resultText.innerHTML = formattedText;
+
+            } catch (error) {
+                console.error('AI Error:', error);
+                resultText.innerHTML = `<div style="color: red; text-align: center;">Помилка: ${error.message}</div>`;
+            }
+        }
+
+        function getEmployeeIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('employeeId');
+        }
+
+        async function loadEmployeeHistory() {
+            const employeeId = getEmployeeIdFromUrl();
+            const pageTitle = document.getElementById('pageTitle');
+
+            if (!employeeId) {
+                pageTitle.textContent = 'Працівника не знайдено';
+                document.getElementById('noData').style.display = 'block';
+                document.getElementById('feedbackTable').style.display = 'none';
+                return;
+            }
+
+            pageTitle.textContent = `Історія відгуків: ${employeeId}`;
+
+            try {
+                const response = await fetch('/api/feedback');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const allFeedbacks = await response.json();
+
+                // Filter feedbacks for this employee
+                // Note: handling case where employeeId might be stored differently or handling duplicates if any
+                const employeeFeedbacks = allFeedbacks.filter(fb => fb.employeeId === employeeId);
+
+                renderFeedbackTable(employeeFeedbacks);
+
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                pageTitle.textContent = 'Помилка завантаження даних';
+            }
+        }
+
+        function renderFeedbackTable(feedbacks) {
+            const tbody = document.querySelector('#feedbackTable tbody');
+            const noDataDiv = document.getElementById('noData');
+            const table = document.getElementById('feedbackTable');
+
+            tbody.innerHTML = '';
+
+            if (feedbacks.length === 0) {
+                noDataDiv.style.display = 'block';
+                table.style.display = 'none';
+                return;
+            } else {
+                noDataDiv.style.display = 'none';
+                table.style.display = 'table';
+            }
+
+            // Sort by date desc
+            feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            feedbacks.forEach(fb => {
+                const tr = document.createElement('tr');
+
+                const dateObj = new Date(fb.createdAt);
+                const dateStr = dateObj.toLocaleString('uk-UA', {
+                    day: '2-digit', month: '2-digit', year: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                });
+
+                const isLike = fb.type === 'like';
+                const voteClass = isLike ? 'vote-like' : 'vote-dislike';
+                const voteText = isLike ? 'Лайк' : 'Дизлайк';
+
+                const hasComment = fb.comment && fb.comment.trim().length > 0;
+                const commentClass = hasComment ? 'comment-yes' : 'comment-no';
+                let commentHtml = hasComment ? 'Є' : 'Немає';
+
+                if (hasComment) {
+                    const safeComment = fb.comment.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                    commentHtml += ` <span class="envelope-icon" onclick="openModal('${safeComment}')" title="Переглянути коментар">✉️</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="timestamp">${dateStr}</td>
+                    <td class="${voteClass}">${voteText}</td>
+                    <td class="${commentClass}">${commentHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function goToComments(filterType) {
+            const employeeId = getEmployeeIdFromUrl();
+            if (employeeId) {
+                window.location.href = `comments_view.html?employeeId=${employeeId}&filter=${filterType}`;
+            }
+        }
+
+        loadEmployeeHistory();
+    </script>
+</body>
+
+</html>
