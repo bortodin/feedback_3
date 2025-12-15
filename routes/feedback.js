@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
         }
 
         // Check for existing feedback from this client in the last 60 minutes
-        const sixtyMinutesAgo = new Date(Date.now() - 60 * 60 * 1000);
+        const sixtyMinutesAgo = new Date(Date.now() - 10 * 10 * 1000);
         const existingFeedback = await Feedback.findOne({
             clientId: clientId,
             createdAt: { $gt: sixtyMinutesAgo }
@@ -125,3 +125,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+
