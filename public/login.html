@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід в систему</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #cdd6e7 0%, #b7cbef 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .google-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            color: #757575;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .google-btn:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            background-color: #f8f9fa;
+        }
+        .google-btn img {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>Вхід для адміністратора</h1>
+        <a href="/auth/google" class="google-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo">
+            Увійти через Google
+        </a>
+    </div>
+</body>
+</html>
