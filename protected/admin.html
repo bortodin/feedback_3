@@ -376,17 +376,20 @@
 
         async function loadFeedback() {
             try {
+                console.log('Fetching feedback data...');
                 const response = await fetch('/api/feedback');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const feedbacks = await response.json();
+                console.log(`Successfully fetched ${feedbacks.length} records.`);
 
                 // Render Main Feedback Table
                 renderFeedbackTable(feedbacks);
 
                 // Calculate and Render Rating Table
                 const ratings = calculateRatings(feedbacks);
+                console.log('Calculated ratings:', ratings);
                 renderRatingTable(ratings);
 
             } catch (error) {
@@ -450,7 +453,10 @@
             const ratingsMap = {};
 
             feedbacks.forEach(fb => {
-                const name = fb.employeeId || 'Невідомо';
+                // Trim name and handle potential empty/null employeeId
+                let name = fb.employeeId ? fb.employeeId.toString().trim() : 'Невідомо';
+                if (name === '') name = 'Невідомо';
+
                 if (!ratingsMap[name]) {
                     ratingsMap[name] = { name: name, likes: 0, dislikes: 0 };
                 }
@@ -461,10 +467,12 @@
                 }
             });
 
-            return Object.values(ratingsMap).map(r => ({
+            const result = Object.values(ratingsMap).map(r => ({
                 ...r,
                 diff: r.likes - r.dislikes
             }));
+
+            return result;
         }
 
         function renderRatingTable(ratings) {
