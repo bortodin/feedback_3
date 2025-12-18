@@ -28,7 +28,7 @@ const feedbackSchema = new mongoose.Schema({
 feedbackSchema.post('save', async function (doc) {
     try {
         const Feedback = mongoose.model('Feedback');
-        const limit = 10;
+        const limit = 100;
 
         // Count feedbacks for this specific employee
         const count = await Feedback.countDocuments({ employeeId: doc.employeeId });
@@ -52,4 +52,5 @@ feedbackSchema.post('save', async function (doc) {
 });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);
+
 
